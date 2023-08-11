@@ -1,0 +1,59 @@
+.message-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 550px;
+    height: 30px;
+    font-size: 12px;
+    margin-top: 5px;
+    border-radius: 6px;
+    padding: 3px;
+}
+
+.message-box:hover {
+    color: #778db5;
+    border: 1px solid #778db5;
+}
+
+.message-container {
+   overflow-y: scroll;
+}
+
+.message-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.message-author {
+    position: relative;
+}
+
+.message-author:before{
+    content: 'author:';
+    position: absolute;
+    left: -45px;
+    color: blue;
+}
+.message-date {
+    position: relative;
+}
+
+.message-date:before {
+    content: 'date:';
+    position: absolute;
+    left: -45px;
+    color: blue;
+}
+
+.message-text {
+    position: relative;
+}
+
+.message-text:before {
+    content: "message";
+    position: absolute;
+    top: -15px;
+    left: 40px;
+    opacity: 0.5;
+    background-color: white;
+}
