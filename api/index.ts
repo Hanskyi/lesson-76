@@ -7,14 +7,14 @@ const port = 8000;
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use('/message', chatRouter);
+app.use('/', chatRouter);
 
 app.listen(port, () => {
     console.log(`Server started on ${port} port!`);
 });
 
 const run  = async () => {
-    fileDb.init();
+   await fileDb.init();
 };
 
 run().catch(error => console.log(error));

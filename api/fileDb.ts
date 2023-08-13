@@ -1,19 +1,44 @@
+import {promises as fs} from 'fs';
+import {randomUUID} from "crypto";
+import {IPosts, IPostsWithoutId} from "./type";
 
+
+const pathName = './db.json';
+let data: IPostsWithoutId[] = [];
 
 const fileDb = {
-    init() {
-
+    async init() {
+        try {
+            const fileContents = await fs.readFile(pathName);
+            data = JSON.parse(fileContents.toString());
+        } catch (e) {
+            console.error(e);
+            data = [];
+        }
     },
-    getMessage() {
-
+    
+    async getItems() {
+        return data;
     },
-    postMessage() {
+    
+    async addItem(item: IPosts) {
 
+        const date = new Date().toString();
+        const id = randomUUID().toString()
+        const message = {
+            author: item.author,
+            message: item.message,
+            id: id,
+            dateTime: date,
+        };
+
+        data.push(message);
+        await this.save();
+        return message;
     },
-    save(){
-
-    }
-
+    async save() {
+        await fs.writeFile(pathName, JSON.stringify(data));
+    },
 }
 
 export default fileDb;
