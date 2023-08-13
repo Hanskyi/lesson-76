@@ -1,13 +1,21 @@
 import React from 'react';
-import './App.css';
 import User from "./Containers/User/User";
+import {CssBaseline} from "@mui/material";
+import {Route, Routes} from "react-router-dom";
 
 
 const App: React.FC = () => {
   return (
-      <div className="App">
-        <User/>
-      </div>
+      <>
+          <CssBaseline/>
+          <div className="App">
+              <Routes>
+                  <Route path="/message" element={<User/>} ></Route>
+                  {/*<Route path="/message/:date" element={<User/>} ></Route>*/}
+              </Routes>
+          </div>
+      </>
+
 
   );
 };

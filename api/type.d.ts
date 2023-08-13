@@ -4,7 +4,7 @@ export interface  IPosts {
 }
 
 export interface IPostsWithoutId {
-    dateTime: string,
+    datetime: string,
     id: string,
     author: string,
     message: string;

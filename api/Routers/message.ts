@@ -4,6 +4,28 @@ import fileDb from "../fileDb";
 
 const chatRouter = express.Router();
 
+chatRouter.get('/message', async (req, res) => {
+    let messages = await fileDb.getItems();
+    console.log(req.query.datetime)
+    if (req.query.datetime) {
+        const queryDate = req.query.datetime as string;
+
+        const date = new Date(queryDate);
+
+        if (isNaN(date.getDate())){
+            return res.status(400).send({"error": "Invalid datetime"});
+
+        }
+        const filterDateTime = messages.filter(message => {
+            const messageDate = new Date(message.datetime);
+            return messageDate > date
+        })
+       res.send(filterDateTime)
+    } else {
+        res.send(messages);
+    }
+})
+
 chatRouter.post('/message/add', async (req, res) => {
     const newPost: IPosts = {
         author: req.body.author,
@@ -18,9 +40,5 @@ chatRouter.post('/message/add', async (req, res) => {
     }
 });
 
-chatRouter.get('/message/get', async (req, res) => {
-    const messages = await fileDb.getItems()
-    res.send(messages)
-})
 
 export default chatRouter;

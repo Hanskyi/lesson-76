@@ -18,18 +18,21 @@ const fileDb = {
     },
     
     async getItems() {
+        // if (!data){
+        //
+        // }
         return data;
     },
     
     async addItem(item: IPosts) {
 
-        const date = new Date().toString();
+        const date = (new Date()).toISOString();
         const id = randomUUID().toString()
         const message = {
             author: item.author,
             message: item.message,
             id: id,
-            dateTime: date,
+            datetime: date,
         };
 
         data.push(message);

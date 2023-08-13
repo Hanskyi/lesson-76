@@ -1,105 +1,100 @@
 import React, {useEffect, useState} from 'react';
-import './user.css';
 import Message from "../../Components/Message/Message";
-import {IPosts} from "../../types";
+import {IPost, IPosts} from "../../types";
+import {Container, Grid} from "@mui/material";
+import FormUser from "./FormUser";
+import axiosApi from "../../axiosApi";
+import {useLocation} from "react-router-dom";
 
-const baseUrl = 'http://146.185.154.90:8000/messages';
+
 const User = () => {
+    const [inputValue, setInputValue] = useState<IPost>({
+        author: '',
+        message: ''
+    });
+
     const [posts, setPosts] = useState<IPosts[]>([]);
-    const [message, setMessage] = useState<string>('');
-    const [author, setAuthor] = useState<string>('');
-    const [dateTime, setDateTime] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false)
 
-    const onChangeInputMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setMessage(e.target.value);
-    };
+    const date = useLocation().search;
+    const searchParams = new URLSearchParams(date);
+    const dateTime = searchParams.get('datetime');
 
-    const onChangeInputAuthor = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAuthor(e.target.value);
+
+    const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = e.target;
+        setInputValue(prevState => {
+            return {
+                ...prevState,
+                [name]: value
+            }
+        });
     };
 
     const getFirstResponse = async () => {
-        const response = await fetch(baseUrl);
-        if (response.ok) {
-            const parseResponse: IPosts[] = await response.json() as IPosts[];
-            setPosts(parseResponse);
-            setDateTime(parseResponse[parseResponse.length - 1].datetime);
+        const response =  dateTime ? await axiosApi.get<IPosts[] | null>(`?datetime=${dateTime}`) : await axiosApi.get<IPosts[] | null>('/');
+        const messages = response.data;
+
+        if (messages !== null) {
+            if (posts.length > 0) {
+                setPosts((prevState) => {
+                    const filteredPosts = messages.filter((post: IPosts) =>
+                        prevState.every((newPost: IPosts) => newPost.id !== post.id)
+                    );
+                    return [...prevState, ...filteredPosts];
+                });
+            }
+                setPosts(messages);
+
+        }
+        if(messages === null){
+            setPosts([])
         }
     };
 
     const onclickSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (message !== '' && author !== '') {
-            const data = new URLSearchParams();
-            data.set('message', `${message}`);
-            data.set('author', `${author}`);
-            setMessage('');
-            setAuthor('');
-            await fetch(baseUrl, {
-                method: 'POST',
-                body: data,
-            });
+        if (inputValue.message !== '' && inputValue.author !== '') {
+            setLoading(true);
+            await axiosApi.post('/add', inputValue);
+            setInputValue({author: '', message: ''});
+            setLoading(false);
         }
     };
 
+        useEffect(() => {
+            void getFirstResponse();
+        }, [])
 
-    const getMessage = async () => {
-        if (dateTime.length > 0) {
-            const url = `${baseUrl}?datetime=${dateTime}`;
-            console.log(url);
-            const response = await fetch(url);
-            const responseParse = await response.json();
-            console.log(responseParse);
-            if (responseParse.length > 0) {
-                setPosts((prevState) => {
-                    const filteredPosts = responseParse.filter((post: IPosts) =>
-                        prevState.every((newPost: IPosts) => newPost._id !== post._id)
-                    );
-                    return [...prevState, ...filteredPosts];
-                });
-                setDateTime(responseParse[responseParse.length - 1].datetime);
-            }
-        }
+        useEffect(() => {
+            const interval = setInterval(getFirstResponse, 3000);
+            return () => {
+                clearInterval(interval);
+            };
+        }, [posts]);
+
+
+        const Memoized = React.memo(Message);
+
+
+        return (
+            <Container maxWidth="lg" sx={{marginTop: "50px"}}>
+                <Grid mb={5}>
+                    {posts.map(post => {
+                        return <Memoized key={post.id} post={post}/>
+                    })}
+                </Grid>
+
+                <FormUser
+                    onChangeInput={onChangeInput}
+                    inputValue={inputValue}
+                    onclickSendMessage={onclickSendMessage}
+                    loading={loading}
+                />
+            </Container>
+        );
     };
-    useEffect(() => {
-        getFirstResponse();
-    }, [])
 
-    useEffect(() => {
-
-        const interval =  setInterval(getMessage, 3000);
-        return () => {
-            clearInterval(interval);
-        };
-    }, [posts]);
-
-
-    const Memoized = React.memo(Message);
-
-
-    return (
-        <div className="container">
-            <div className="message-container">
-                {posts.map(post => {
-                    return <Memoized key={post._id} post={post}/>
-                })}
-            </div>
-
-            <form className="header">
-                <div className="input-container">
-                    <input required onChange={onChangeInputMessage} value={message} type="text"
-                           className="input-massage-text input"/>
-                    <input required onChange={onChangeInputAuthor} value={author} type="text"
-                           className="input-massage-author input"/>
-                </div>
-                <div className="">
-                    <button onClick={onclickSendMessage}>отправить</button>
-                </div>
-            </form>
-        </div>
-    );
-};
-
-export default User;
+    export default User;
 
 
