@@ -12,9 +12,9 @@ const fileDb = {
             const fileContents = await fs.readFile(pathName);
             const contents = JSON.parse(fileContents.toString());
             if (contents.length > 30) {
-               data = contents.slice(-30)
+               data = contents.slice(-30);
             } else {
-                data = contents
+                data = contents;
             }
         } catch (e) {
             console.error(e);
@@ -23,7 +23,6 @@ const fileDb = {
     },
 
     async getItems() {
-
         return data;
     },
 

@@ -23,7 +23,7 @@ chatRouter.get('/message', async (req, res) => {
     } else {
         res.send(messages);
     }
-})
+});
 
 chatRouter.post('/message/add', async (req, res) => {
     const newPost: IPosts = {
