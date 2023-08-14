@@ -10,20 +10,23 @@ const fileDb = {
     async init() {
         try {
             const fileContents = await fs.readFile(pathName);
-            data = JSON.parse(fileContents.toString());
+            const contents = JSON.parse(fileContents.toString());
+            if (contents.length > 30) {
+               data = contents.slice(-30)
+            } else {
+                data = contents
+            }
         } catch (e) {
             console.error(e);
             data = [];
         }
     },
-    
+
     async getItems() {
-        // if (!data){
-        //
-        // }
+
         return data;
     },
-    
+
     async addItem(item: IPosts) {
 
         const date = (new Date()).toISOString();

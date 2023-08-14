@@ -6,21 +6,20 @@ const chatRouter = express.Router();
 
 chatRouter.get('/message', async (req, res) => {
     let messages = await fileDb.getItems();
-    console.log(req.query.datetime)
+
     if (req.query.datetime) {
         const queryDate = req.query.datetime as string;
-
         const date = new Date(queryDate);
 
-        if (isNaN(date.getDate())){
+        if (isNaN(date.getDate())) {
             return res.status(400).send({"error": "Invalid datetime"});
-
         }
+
         const filterDateTime = messages.filter(message => {
-            const messageDate = new Date(message.datetime);
-            return messageDate > date
-        })
-       res.send(filterDateTime)
+            const messageDate = (new Date(message.datetime)).getDate();
+            return messageDate > date.getDate();
+        });
+        res.send(filterDateTime);
     } else {
         res.send(messages);
     }
