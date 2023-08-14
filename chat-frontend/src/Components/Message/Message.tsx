@@ -12,9 +12,9 @@ const Message: React.FC<Props> = (props) => {
             <CardActionArea component="div">
                     <Grid container display="flex" justifyContent="space-between" alignItems="center" height={100}>
                        <Grid item display="flex"> <Typography>{props.post.message}</Typography></Grid>
-                        <Grid item display="flex" flexDirection="column">
-                            <Typography >{props.post.author}</Typography>
-                            <Typography>{props.post.datetime}</Typography>
+                        <Grid item display="flex" flexDirection="column" textAlign="start">
+                            <Typography ><strong>Author:</strong> {props.post.author}</Typography>
+                            <Typography><strong>Date:</strong> {props.post.datetime}</Typography>
                         </Grid>
                     </Grid>
             </CardActionArea>

@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import Message from "../../Components/Message/Message";
 import {IPost, IPosts} from "../../types";
-import {Container, Grid} from "@mui/material";
+import {Container, Grid, Typography} from "@mui/material";
 import FormUser from "./FormUser";
 import axiosApi from "../../axiosApi";
 import {useLocation} from "react-router-dom";
-
 
 const User = () => {
     const [inputValue, setInputValue] = useState<IPost>({
@@ -48,7 +47,7 @@ const User = () => {
 
         }
         if(messages === null){
-            setPosts([])
+            setPosts([]);
         }
     };
 
@@ -64,7 +63,7 @@ const User = () => {
 
         useEffect(() => {
             void getFirstResponse();
-        }, [])
+        }, []);
 
         useEffect(() => {
             const interval = setInterval(getFirstResponse, 3000);
@@ -76,10 +75,10 @@ const User = () => {
 
         const Memoized = React.memo(Message);
 
-
         return (
-            <Container maxWidth="lg" sx={{marginTop: "50px"}}>
-                <Grid mb={5}>
+            <Container maxWidth="lg" sx={{marginTop: "50px", textAlign: "center"}}>
+                <Typography variant="h5"><strong>Chat</strong></Typography>
+                <Grid mb={5} sx={{overflowY: "scroll", height: "600px"}}>
                     {posts.map(post => {
                         return <Memoized key={post.id} post={post}/>
                     })}
